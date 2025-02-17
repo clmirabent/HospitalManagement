@@ -14,7 +14,6 @@ namespace HospitalManagement
             Specialty = specialty;
             CollegedNumber = collegedNumber;
             Patient = new List<Patient>();  
-            
         }
     }
 }

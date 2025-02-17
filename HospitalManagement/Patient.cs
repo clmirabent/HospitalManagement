@@ -12,16 +12,14 @@ namespace HospitalManagement
         
         public Patient(string name, int age, string dni, Doctor doctorAssigned) : base(name, age, dni)
         {
-            DoctorAssigned = Doctor;
+            DoctorAssigned = doctorAssigned;
             AdmissionDate = DateTime.Now;
             Clinical_history = new Clinical_history();
         }
-
-        public Doctor Doctor { get; set; }
-
+        
         public override string ToString()
         {
-            return $"PATIENT - {base.ToString()}, Doctor Assigned: {Doctor.Name}, Admission Date: {AdmissionDate.ToShortDateString()}";
+            return $"PATIENT - {base.ToString()}, Doctor Assigned: {DoctorAssigned.Name}, Admission Date: {AdmissionDate.ToShortDateString()}";
         }
 
         
