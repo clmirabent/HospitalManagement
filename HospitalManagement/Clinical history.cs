@@ -6,17 +6,15 @@ namespace HospitalManagement
     {
         public List<string> Diagnostics { get; set; }
         public List<string> Treatments { get; set; }
-        public List<Appointments> Appointments { get; set; }
+        public List<Appointment> Appointments { get; set; }
 
         public Clinical_history() 
         { 
             Diagnostics = new List<string>();
             Treatments = new List<string>();
-            Appointments = new List<Appointments>();
+            Appointments = new List<Appointment>();
         }
     }
 
-    public class Appointments
-    {
-    }
+ 
 }
