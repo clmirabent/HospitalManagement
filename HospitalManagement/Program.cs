@@ -21,7 +21,8 @@ namespace HospitalManagement
 4️⃣ Display Doctors
 5️⃣ Display Patients of a Doctor
 6️⃣ Add Admin Staff
-7️⃣ Exit"
+7️⃣ Modify a data from a person
+8️⃣ Exit"
                 );
                 while (true)
                 {
@@ -34,7 +35,6 @@ namespace HospitalManagement
                             Console.WriteLine($"✅ Doctor {newDoctorToCreate.Name} added successfully!");
                             hospital.AddDoctor(newDoctorToCreate);
                             break;
-
                         case "2":
                             Console.WriteLine("---YOU ARE GOING TO ADD A NEW PATIENT---");
                             Person personDoc = CreatePerson();
@@ -49,7 +49,6 @@ namespace HospitalManagement
                                 Console.WriteLine(
                                     $"✅Patient {personDoc.Name} added successfully to Dr. {doctorToAssign.Name}.");
                             }
-
                             break;
                         case "3":
                             Console.WriteLine("---YOU ARE GOING TO REMOVE A PATIENT---");
@@ -61,14 +60,12 @@ namespace HospitalManagement
                             }
                             else if (doctorUnassigned != null)
                             {
-                                Console.WriteLine(
-                                    $"✅ Patient {patientToRemove.Name} removed from Dr. {doctorUnassigned.Name}'s list.");
+                                Console.WriteLine($"✅ Patient {patientToRemove.Name} removed from Dr. {doctorUnassigned.Name}'s list.");
                             }
                             else
                             {
                                 Console.WriteLine($"✅ Patient {patientToRemove.Name} removed from the hospital.");
                             }
-
                             break;
                         case "4":
                             Console.WriteLine("---LIST OF DOCTORS---");
@@ -85,7 +82,15 @@ namespace HospitalManagement
                             hospital.AddAdmin_staff(newAdminStaff);
                             Console.WriteLine($"✅Admin staff {newAdminStaff.Name} added successfully.");
                             break;
-
+                        case "7":
+                            Console.WriteLine("---YOU ARE GOING TO MODIFY DATA FROM A PERSON---");
+                            Person personToModify = GetPerson(hospital);
+                            if (personToModify != null)
+                            {
+                                hospital.ModifyPerson(personToModify);
+                                Console.WriteLine("✅ Data updated successfully!.");
+                            }
+                            break;
                         default:
                             Console.WriteLine("❌ Invalid choice, please select a valid option.");
                             break;
@@ -121,7 +126,6 @@ namespace HospitalManagement
                 Console.WriteLine("Enter a valid dni");
                 dni = Console.ReadLine();
             }
-
             return new Person(name, age, dni);
         }
 
@@ -142,9 +146,8 @@ namespace HospitalManagement
                 Console.WriteLine("Enter a valid colleged number");
                 collegedNumber = Console.ReadLine();
             }
-
             // Create and add the doctor
-            return new Doctor(person.Name, person.Age, person.dni, specialty, collegedNumber);
+            return new Doctor(person.Name, person.Age, person.Dni, specialty, collegedNumber);
         }
 
         static Doctor GetDoc(Hospital hospital)
@@ -162,7 +165,7 @@ namespace HospitalManagement
             foreach (var doctor in hospital.Doctors)
             {
                 Console.WriteLine(
-                    $"Name: {doctor.Name}, DNI: {doctor.dni}, Specialty: {doctor.Specialty}, Colleged Number: {doctor.CollegedNumber}");
+                    $"Name: {doctor.Name}, DNI: {doctor.Dni}, Specialty: {doctor.Specialty}, Colleged Number: {doctor.CollegedNumber}");
             }
         }
 
@@ -187,7 +190,7 @@ namespace HospitalManagement
             Console.WriteLine($"\nPatients assigned to Dr. {doctorListToShow.Name}:");
             foreach (var patient in doctorListToShow.Patient)
             {
-                Console.WriteLine($"- {patient.Name}, DNI: {patient.dni}, Age: {patient.Age}");
+                Console.WriteLine($"- {patient.Name}, DNI: {patient.Dni}, Age: {patient.Age}");
             }
         }
 
@@ -219,9 +222,20 @@ namespace HospitalManagement
                 Console.WriteLine("Enter a valid position");
             }
 
-            Admin_staff newAdminStaff = new Admin_staff(person.Name, person.Age, person.dni, department, position);
+            Admin_staff newAdminStaff = new Admin_staff(person.Name, person.Age, person.Dni, department, position);
             return newAdminStaff;
         }
+
+        static Person GetPerson(Hospital hospital)
+        {
+            Console.WriteLine("Please enter the person's dni you want to modify: ");
+            string inputDni = Console.ReadLine();
+
+            // Find the person by DNI
+            Person personToModify = hospital.FindPersonByDni(inputDni);
+            return personToModify;
+        }
+        
 
         public static int ConvertStringInt(string question)
         {
