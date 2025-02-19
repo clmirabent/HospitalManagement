@@ -8,13 +8,13 @@ namespace HospitalManagement
     {
         public List<Doctor> Doctors { get; set; }
         public List<Patient> Patients { get; set; }
-        public List<Admin_staff> Admin_staffs { get; set; }
+        public List<AdminStaff> AdminStaffs { get; set; }
 
         public Hospital()
         {
             Doctors = new List<Doctor>();
             Patients = new List<Patient>();
-            Admin_staffs = new List<Admin_staff>();
+            AdminStaffs = new List<AdminStaff>();
         }
 
         public void AddDoctor(Doctor doctor)
@@ -90,9 +90,9 @@ namespace HospitalManagement
             return Doctors.Find(d => d.Dni == docId);
         }
 
-        public void AddAdmin_staff(Admin_staff person)
+        public void AddAdmin_staff(AdminStaff person)
         {
-            Admin_staffs.Add(person);
+            AdminStaffs.Add(person);
 
         }
         public Person FindPersonByDni(string dni)
@@ -103,40 +103,11 @@ namespace HospitalManagement
             Patient patientToModify = Patients.Find(p => p.Dni == dni);
             if (patientToModify != null) return patientToModify;
 
-            Admin_staff adminStaffToModify = Admin_staffs.Find(a => a.Dni == dni);
+            AdminStaff adminStaffToModify = AdminStaffs.Find(a => a.Dni == dni);
             if (adminStaffToModify != null) return adminStaffToModify;
 
             return null;
-           
-            /*
-            // search on doctor's list
-            foreach (var doctor in Doctors)
-            {
-                if (doctor.dni == dni)
-                {
-                    return doctor;
-                }
-            }
-            // search on patient's list
-            foreach (var patient in Patients)
-            {
-                if (patient.dni == dni)
-                {
-                    return patient;
-                }
-            }
-
-            // search on admin's list
-            foreach (var admin in Admin_staffs)
-            {
-                if (admin.dni == dni)
-                {
-                    return admin;
-                }
-            }
-            //if non person is found return
-            return null;
-            */
+            
         }
 
         public Person ModifyPerson(Person person)
@@ -181,7 +152,7 @@ namespace HospitalManagement
                 }
             }
 
-            if (personToModify is Admin_staff admin)
+            if (personToModify is AdminStaff admin)
             {
                 Console.Write("New department: ");
                 string departmentInput = Console.ReadLine();
@@ -198,6 +169,18 @@ namespace HospitalManagement
                 }
             }
             return personToModify;  
+        }
+
+        public bool TryAddAppointment(Patient patient, Appointment appointment)
+        {
+             //1. buscar paciente GetPatient
+             //si el paciente no existe, crear el paciente AddPatient(), aquí dentro se le asigna un doctor
+             //2. si el paciente existe, Asignar un doctor a ese paciente GetDoc
+             //3. crear una nueva cita
+             //4. añadir la cita a la historia clinica
+         
+            patient.ClinicalHistory.Appointments.Add(appointment);
+            return true;
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 
 namespace HospitalManagement
@@ -22,7 +23,7 @@ namespace HospitalManagement
 5️⃣ Display Patients of a Doctor
 6️⃣ Add Admin Staff
 7️⃣ Modify a data from a person
-8️⃣ Exit"
+8️⃣ Create appointment"
                 );
                 while (true)
                 {
@@ -49,6 +50,7 @@ namespace HospitalManagement
                                 Console.WriteLine(
                                     $"✅Patient {personDoc.Name} added successfully to Dr. {doctorToAssign.Name}.");
                             }
+
                             break;
                         case "3":
                             Console.WriteLine("---YOU ARE GOING TO REMOVE A PATIENT---");
@@ -60,12 +62,14 @@ namespace HospitalManagement
                             }
                             else if (doctorUnassigned != null)
                             {
-                                Console.WriteLine($"✅ Patient {patientToRemove.Name} removed from Dr. {doctorUnassigned.Name}'s list.");
+                                Console.WriteLine(
+                                    $"✅ Patient {patientToRemove.Name} removed from Dr. {doctorUnassigned.Name}'s list.");
                             }
                             else
                             {
                                 Console.WriteLine($"✅ Patient {patientToRemove.Name} removed from the hospital.");
                             }
+
                             break;
                         case "4":
                             Console.WriteLine("---LIST OF DOCTORS---");
@@ -78,7 +82,7 @@ namespace HospitalManagement
                         case "6":
                             Console.WriteLine("---YOU ARE GOING TO ADD A NEW ADMIN STAFF---");
                             Person personAdmin = CreatePerson();
-                            Admin_staff newAdminStaff = CreateAdminStaff(personAdmin);
+                            AdminStaff newAdminStaff = CreateAdminStaff(personAdmin);
                             hospital.AddAdmin_staff(newAdminStaff);
                             Console.WriteLine($"✅Admin staff {newAdminStaff.Name} added successfully.");
                             break;
@@ -90,6 +94,46 @@ namespace HospitalManagement
                                 hospital.ModifyPerson(personToModify);
                                 Console.WriteLine("✅ Data updated successfully!.");
                             }
+
+                            break;
+                        case "8":
+                            Console.WriteLine("---YOU ARE GOING TO CREATE AN APPOINTMENT---");
+                            Patient patientToAddAppointment = GetPatient(hospital);
+                            Doctor doctorForAppointment;
+
+                            if (patientToAddAppointment == null)
+                            {
+                                Console.WriteLine(
+                                    @"❌This patient don't exist. ---YOU ARE GOING TO ADD A NEW PATIENT---");
+                                Person personToCreate = CreatePerson();
+                                Console.WriteLine("---Select a doctor by typing their dni number:---");
+                                Doctor doctorAssigned = GetDoc(hospital);
+                                if (!hospital.TryAddPatient(personToCreate, doctorAssigned, out string error1))
+                                {
+                                    Console.WriteLine(error1);
+                                }
+                                else
+                                {
+                                    Console.WriteLine(
+                                        $"✅Patient {personToCreate.Name} added successfully to Dr. {doctorAssigned.Name}.");
+                                }
+
+                                patientToAddAppointment = hospital.GetPatient(personToCreate.Dni);
+                                doctorForAppointment = doctorAssigned;
+                            }
+                            else
+                            {
+                                Console.WriteLine("---Select a doctor by typing their dni number:---");
+                                doctorForAppointment = GetDoc(hospital);
+                            }
+
+                            DateTime appointmentDate = GetAppointmentDate();
+
+                            Appointment newAppointment = new Appointment(patientToAddAppointment, appointmentDate,
+                                doctorForAppointment);
+                            hospital.TryAddAppointment(patientToAddAppointment, newAppointment);
+                            Console.WriteLine(
+                                $"✅ Appointment scheduled for {patientToAddAppointment.Name} with Dr. {doctorForAppointment.Name} on {appointmentDate}.");
                             break;
                         default:
                             Console.WriteLine("❌ Invalid choice, please select a valid option.");
@@ -126,6 +170,7 @@ namespace HospitalManagement
                 Console.WriteLine("Enter a valid dni");
                 dni = Console.ReadLine();
             }
+
             return new Person(name, age, dni);
         }
 
@@ -146,6 +191,7 @@ namespace HospitalManagement
                 Console.WriteLine("Enter a valid colleged number");
                 collegedNumber = Console.ReadLine();
             }
+
             // Create and add the doctor
             return new Doctor(person.Name, person.Age, person.Dni, specialty, collegedNumber);
         }
@@ -153,9 +199,17 @@ namespace HospitalManagement
         static Doctor GetDoc(Hospital hospital)
         {
             DisplayDoctors(hospital);
+            Console.Write("Enter doctor's dni:");
             string docId = Console.ReadLine();
 
             Doctor doctorToAsign = hospital.GetDoctor(docId);
+
+            while (doctorToAsign == null)
+            {
+                Console.Write("Enter doctor's dni:");
+                docId = Console.ReadLine();
+                doctorToAsign = hospital.GetDoctor(docId);
+            }
 
             return doctorToAsign;
         }
@@ -196,7 +250,7 @@ namespace HospitalManagement
 
         static Patient GetPatient(Hospital hospital)
         {
-            Console.WriteLine("Please enter the patient's dni you want to remove: ");
+            Console.WriteLine("Please enter the patient's dni: ");
             string inputDni = Console.ReadLine();
 
             // Find the patient by DNI
@@ -205,7 +259,7 @@ namespace HospitalManagement
             return patientToRemove;
         }
 
-        static Admin_staff CreateAdminStaff(Person person)
+        static AdminStaff CreateAdminStaff(Person person)
         {
             Console.WriteLine("Add the department for this staff");
             string department = Console.ReadLine();
@@ -222,7 +276,7 @@ namespace HospitalManagement
                 Console.WriteLine("Enter a valid position");
             }
 
-            Admin_staff newAdminStaff = new Admin_staff(person.Name, person.Age, person.Dni, department, position);
+            AdminStaff newAdminStaff = new AdminStaff(person.Name, person.Age, person.Dni, department, position);
             return newAdminStaff;
         }
 
@@ -235,7 +289,28 @@ namespace HospitalManagement
             Person personToModify = hospital.FindPersonByDni(inputDni);
             return personToModify;
         }
-        
+
+        static DateTime GetAppointmentDate()
+        {
+            DateTime appointmentDate;
+
+            while (true) // Keep asking until the user enters a valid date
+            {
+                Console.WriteLine("Enter appointment date and time (format: dd-MM-yyyy HH:mm):");
+                string dateTimeInput = Console.ReadLine();
+
+                if (DateTime.TryParseExact(dateTimeInput, "dd-MM-yyyy HH:mm",
+                        CultureInfo.InvariantCulture, DateTimeStyles.None, out appointmentDate))
+                {
+                    return appointmentDate; // Return the valid date
+                }
+                else
+                {
+                    Console.WriteLine("❌ Invalid date format. Please try again.");
+                }
+            }
+        }
+
 
         public static int ConvertStringInt(string question)
         {

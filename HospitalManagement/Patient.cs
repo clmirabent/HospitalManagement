@@ -7,14 +7,14 @@ namespace HospitalManagement
         public Doctor DoctorAssigned { get; set; }
         
         public DateTime AdmissionDate { get; set; }
-        public Clinical_history Clinical_history { get; set; }
+        public ClinicalHistory ClinicalHistory { get; set; }
         
         
         public Patient(string name, int age, string dni, Doctor doctorAssigned) : base(name, age, dni)
         {
             DoctorAssigned = doctorAssigned;
             AdmissionDate = DateTime.Now;
-            Clinical_history = new Clinical_history();
+            ClinicalHistory = new ClinicalHistory();
         }
         
         public override string ToString()
