@@ -173,14 +173,37 @@ namespace HospitalManagement
 
         public bool TryAddAppointment(Patient patient, Appointment appointment)
         {
-             //1. buscar paciente GetPatient
-             //si el paciente no existe, crear el paciente AddPatient(), aquí dentro se le asigna un doctor
-             //2. si el paciente existe, Asignar un doctor a ese paciente GetDoc
-             //3. crear una nueva cita
-             //4. añadir la cita a la historia clinica
-         
             patient.ClinicalHistory.Appointments.Add(appointment);
             return true;
+        }
+
+        public Appointment GetAppointment(string patientDni)
+        {
+            // Search patient in the patient's list
+            Patient patient = GetPatient(patientDni);
+           
+          Appointment appointment= patient.ClinicalHistory.Appointments.Find(a => a.Patient.Dni == patientDni);
+          return appointment;
+        }
+        
+        public Appointment ModifyAppointment(Appointment appointmentToModify, Func<DateTime> GetAppointmentDate)
+        {
+            Console.WriteLine($"Current Appointment to modify: {appointmentToModify.Date:dd-MM-yyyy HH:mm} with Doctor {appointmentToModify.Doctor.Name}");
+            Console.WriteLine("$ ⚠️ Leave an empty space to remain unchanged");
+            
+            // Get new date
+            appointmentToModify.Date = GetAppointmentDate();
+            
+            // Get new doctor
+            Console.WriteLine("Enter the new doctor's name:");
+            string newDoctorName = Console.ReadLine();
+
+            if (!string.IsNullOrEmpty(newDoctorName))
+            {
+                appointmentToModify.Doctor.Name = newDoctorName;
+            }
+            return appointmentToModify;  
+            
         }
 
     }

@@ -9,10 +9,7 @@ namespace HospitalManagement
         public static void Main(string[] args)
         {
             Hospital hospital = new Hospital();
-
-
-            while (true)
-            {
+            
                 Console.Clear();
                 Console.WriteLine(@"
 --- 🏥 HOSPITAL MANAGEMENT SYSTEM ---);
@@ -23,10 +20,14 @@ namespace HospitalManagement
 5️⃣ Display Patients of a Doctor
 6️⃣ Add Admin Staff
 7️⃣ Modify a data from a person
-8️⃣ Create appointment"
+8️⃣ Create appointment
+9️⃣ Modify appointment"
+
                 );
                 while (true)
                 {
+
+
                     string choice = Console.ReadLine();
                     switch (choice)
                     {
@@ -48,7 +49,7 @@ namespace HospitalManagement
                             else
                             {
                                 Console.WriteLine(
-                                    $"✅Patient {personDoc.Name} added successfully to Dr. {doctorToAssign.Name}.");
+                                    $"✅ Patient {personDoc.Name} added successfully to Dr. {doctorToAssign.Name}.");
                             }
 
                             break;
@@ -104,7 +105,7 @@ namespace HospitalManagement
                             if (patientToAddAppointment == null)
                             {
                                 Console.WriteLine(
-                                    @"❌This patient don't exist. ---YOU ARE GOING TO ADD A NEW PATIENT---");
+                                    @"❌This patient doesn't exist. ---YOU ARE GOING TO ADD A NEW PATIENT---");
                                 Person personToCreate = CreatePerson();
                                 Console.WriteLine("---Select a doctor by typing their dni number:---");
                                 Doctor doctorAssigned = GetDoc(hospital);
@@ -135,12 +136,33 @@ namespace HospitalManagement
                             Console.WriteLine(
                                 $"✅ Appointment scheduled for {patientToAddAppointment.Name} with Dr. {doctorForAppointment.Name} on {appointmentDate}.");
                             break;
+                        case "9":
+                            Console.WriteLine("---YOU ARE GOING TO MODIFY A PATIENT'S APPOINTMENT---");
+                            //obtain patient
+                            Patient patientToModifyAppointment = GetPatient(hospital);
+                            if (patientToModifyAppointment == null)
+                            {
+                                Console.WriteLine("❌ This patient doesn't exist");
+                            }
+
+                            //obtain patient's appointment
+                            Appointment appointmentToModify = hospital.GetAppointment(patientToModifyAppointment.Dni);
+                            if (appointmentToModify == null)
+                            {
+                                Console.WriteLine("❌ No appointment found for this patient.");
+                            }
+
+                            hospital.ModifyAppointment(appointmentToModify, GetAppointmentDate);
+                            Console.WriteLine(
+                                $"✅ Appointment updated: {appointmentToModify.Date:dd-MM-yyyy HH:mm} with Dr. {appointmentToModify.Doctor.Name}");
+
+                            break;
+                        
                         default:
                             Console.WriteLine("❌ Invalid choice, please select a valid option.");
                             break;
                     }
                 }
-            }
         }
 
         static Person CreatePerson()
@@ -254,9 +276,9 @@ namespace HospitalManagement
             string inputDni = Console.ReadLine();
 
             // Find the patient by DNI
-            Patient patientToRemove = hospital.GetPatient(inputDni);
+            Patient patient = hospital.GetPatient(inputDni);
 
-            return patientToRemove;
+            return patient;
         }
 
         static AdminStaff CreateAdminStaff(Person person)
