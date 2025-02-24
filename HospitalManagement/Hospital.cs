@@ -206,6 +206,15 @@ namespace HospitalManagement
             
         }
 
+        public bool TryRemoveAppointment(Appointment appointmentToRemove, Patient patient)
+        {
+            if (patient.ClinicalHistory.Appointments.Contains(appointmentToRemove))
+            {
+                patient.ClinicalHistory.Appointments.Remove(appointmentToRemove);
+            }
+            return true;
+        }
+
     }
 }
 

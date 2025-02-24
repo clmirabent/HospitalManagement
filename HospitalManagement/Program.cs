@@ -21,7 +21,8 @@ namespace HospitalManagement
 6️⃣ Add Admin Staff
 7️⃣ Modify a data from a person
 8️⃣ Create appointment
-9️⃣ Modify appointment"
+9️⃣ Modify appointment
+1️⃣0️⃣ Delete appointment"
 
                 );
                 while (true)
@@ -157,7 +158,24 @@ namespace HospitalManagement
                                 $"✅ Appointment updated: {appointmentToModify.Date:dd-MM-yyyy HH:mm} with Dr. {appointmentToModify.Doctor.Name}");
 
                             break;
-                        
+                        case "10":
+                            Console.WriteLine("---YOU ARE GOING TO REMOVE A PATIENT---");
+                            //obtain patient
+                            Patient patientToRemoveAppointment = GetPatient(hospital);
+                            if (patientToRemoveAppointment == null)
+                            {
+                                Console.WriteLine("❌ This patient doesn't exist");
+                            }
+
+                            //obtain patient's appointment
+                            Appointment appointmentToRemove = hospital.GetAppointment(patientToRemoveAppointment.Dni);
+                            if (appointmentToRemove == null)
+                            {
+                                Console.WriteLine("❌ No appointment found for this patient.");
+                            }
+                            hospital.TryRemoveAppointment(appointmentToRemove, patientToRemoveAppointment);
+                            Console.WriteLine($"✅ {patientToRemoveAppointment.Name} 's appointment removed ");
+                            break;
                         default:
                             Console.WriteLine("❌ Invalid choice, please select a valid option.");
                             break;
