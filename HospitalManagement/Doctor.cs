@@ -15,5 +15,10 @@ namespace HospitalManagement
             CollegedNumber = collegedNumber;
             Patient = new List<Patient>();  
         }
+
+        public override string ToString()
+        {
+            return $"{Name}: {Specialty}";
+        }
     }
 }

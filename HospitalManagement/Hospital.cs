@@ -22,6 +22,21 @@ namespace HospitalManagement
             Doctors.Add(doctor);
         }
 
+        public bool TryRemoveDoctor(string doctorDniToRemove, out string error)
+        {
+            Doctor doctorFound = Doctors.Find(doctor => doctor.Dni == doctorDniToRemove);
+
+            if(doctorFound is null)
+            {
+                error = "This doctor is not registered";
+                return false;
+            }
+
+            Doctors.Remove(doctorFound);
+            error = "";
+            return true;
+        }
+
         public bool TryAddPatient(Person person, Doctor doctorAssigned, out string error)
         {
             if (doctorAssigned == null)
@@ -81,12 +96,6 @@ namespace HospitalManagement
 
         public Doctor GetDoctor(string docId)
         {
-            while (!Doctors.Any(d => d.Dni == docId))
-            {
-                Console.WriteLine("Selection Invalid, please select a valid doctor");
-                docId = Console.ReadLine();
-            }
-
             return Doctors.Find(d => d.Dni == docId);
         }
 
@@ -110,110 +119,91 @@ namespace HospitalManagement
             
         }
 
-        public Person ModifyPerson(Person person)
+        public Person ModifyPerson(string personDni, Person person, out string error)
         {
-            Person personToModify = FindPersonByDni(person.Dni);
+            Person personToModify = FindPersonByDni(personDni);
+
             if (personToModify == null)
             {
-                Console.WriteLine("❌ Person not found.");
+                error = "Person not found.";
                 return null; 
             }
-            Console.WriteLine($" Person found: {personToModify.Name}, DNI: {personToModify.Dni}");
-            Console.WriteLine("$ ⚠️ Leave an empty space to remain unchanged");
 
-            Console.Write("New name:  ");
-            string newName = Console.ReadLine();
-            if (!string.IsNullOrEmpty(newName))
-            {
-                personToModify.Name = newName;
-            }
+            personToModify.Name = person.Name;
 
-            Console.Write("New age: ");
-            string ageInput = Console.ReadLine();
-            if (int.TryParse(ageInput, out int newAge) && newAge > 0)
-            {
-                personToModify.Age = newAge;
-            }
+            personToModify.Age = person.Age;
 
-            if (personToModify is Doctor doctor)
-            {
-                Console.Write("New specialty: ");
-                string specialityInput = Console.ReadLine();
-                if (!string.IsNullOrEmpty(specialityInput))
-                {
-                    doctor.Specialty = specialityInput;
-                }
+            personToModify.Dni = person.Dni;
 
-                Console.Write("New Colleged Number: ");
-                string collegedNumberInput = Console.ReadLine();
-                if (!string.IsNullOrEmpty(collegedNumberInput)) 
-                {
-                    doctor.CollegedNumber = collegedNumberInput;
-                }
-            }
+            error = "";
 
-            if (personToModify is AdminStaff admin)
-            {
-                Console.Write("New department: ");
-                string departmentInput = Console.ReadLine();
-                if (!string.IsNullOrEmpty(departmentInput))  
-                {
-                    admin.Departament = departmentInput;
-                }
-
-                Console.Write("New position: ");
-                string positionInput = Console.ReadLine();
-                if (!string.IsNullOrEmpty(positionInput)) 
-                {
-                    admin.Position = positionInput;
-                }
-            }
             return personToModify;  
         }
 
-        public bool TryAddAppointment(Patient patient, Appointment appointment)
+        public bool TryModifyDoctor(string doctorDni, Doctor doctorWithChanges, out Doctor modifiedDoctor, out string error)
         {
-            patient.ClinicalHistory.Appointments.Add(appointment);
+            Doctor doctorToModify = GetDoctor(doctorDni);
+
+            if(doctorToModify is null)
+            {
+                modifiedDoctor = null;
+                error = "Doctor not found";
+                return false;
+            }
+
+            doctorToModify.Name = doctorWithChanges.Name;
+            doctorToModify.Dni = doctorWithChanges.Dni;
+            doctorToModify.Specialty = doctorWithChanges.Specialty;
+            doctorToModify.Age = doctorWithChanges.Age;
+            doctorToModify.CollegedNumber = doctorWithChanges.CollegedNumber;
+            modifiedDoctor = doctorToModify;
+            error = "";
             return true;
         }
 
-        public Appointment GetAppointment(string patientDni)
-        {
-            // Search patient in the patient's list
-            Patient patient = GetPatient(patientDni);
+        //public bool TryAddAppointment(Patient patient, Appointment appointment)
+        //{
+        //    patient.ClinicalHistory.Appointments.Add(appointment);
+        //    return true;
+        //}
+
+        //public Appointment GetAppointment(string patientDni)
+        //{
+        //    // Search patient in the patient's list
+        //    Patient patient = GetPatient(patientDni);
            
-          Appointment appointment= patient.ClinicalHistory.Appointments.Find(a => a.Patient.Dni == patientDni);
-          return appointment;
-        }
+        //  Appointment appointment= patient.ClinicalHistory.Appointments.Find(a => a.Patient.Dni == patientDni);
+        //  return appointment;
+        //}
         
-        public Appointment ModifyAppointment(Appointment appointmentToModify, Func<DateTime> GetAppointmentDate)
-        {
-            Console.WriteLine($"Current Appointment to modify: {appointmentToModify.Date:dd-MM-yyyy HH:mm} with Doctor {appointmentToModify.Doctor.Name}");
-            Console.WriteLine("$ ⚠️ Leave an empty space to remain unchanged");
+        //public Appointment ModifyAppointment(Appointment appointmentToModify, Func<DateTime> GetAppointmentDate)
+        //{
+        //    Console.WriteLine($"Current Appointment to modify: {appointmentToModify.Date:dd-MM-yyyy HH:mm} with Doctor {appointmentToModify.Doctor.Name}");
+        //    Console.WriteLine("$ ⚠️ Leave an empty space to remain unchanged");
             
-            // Get new date
-            appointmentToModify.Date = GetAppointmentDate();
+        //    // Get new date
+        //    appointmentToModify.Date = GetAppointmentDate();
             
-            // Get new doctor
-            Console.WriteLine("Enter the new doctor's name:");
-            string newDoctorName = Console.ReadLine();
+        //    // Get new doctor
+        //    Console.WriteLine("Enter the new doctor's name:");
+        //    string newDoctorName = Console.ReadLine();
 
-            if (!string.IsNullOrEmpty(newDoctorName))
-            {
-                appointmentToModify.Doctor.Name = newDoctorName;
-            }
-            return appointmentToModify;  
+        //    if (!string.IsNullOrEmpty(newDoctorName))
+        //    {
+        //        appointmentToModify.Doctor.Name = newDoctorName;
+        //    }
+        //    return appointmentToModify;  
             
-        }
+        //}
 
-        public bool TryRemoveAppointment(Appointment appointmentToRemove, Patient patient)
-        {
-            if (patient.ClinicalHistory.Appointments.Contains(appointmentToRemove))
-            {
-                patient.ClinicalHistory.Appointments.Remove(appointmentToRemove);
-            }
-            return true;
-        }
+        //public bool TryRemoveAppointment(Appointment appointmentToRemove, Patient patient)
+        //{
+        //    if (patient.ClinicalHistory.Appointments.Contains(appointmentToRemove))
+        //    {
+        //        patient.ClinicalHistory.Appointments.Remove(appointmentToRemove);
+        //    }
+        //    return true;
+        //}
 
     }
 }

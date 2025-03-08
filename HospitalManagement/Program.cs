@@ -91,10 +91,14 @@ namespace HospitalManagement
                         case "7":
                             Console.WriteLine("---YOU ARE GOING TO MODIFY DATA FROM A PERSON---");
                             Person personToModify = GetPerson(hospital);
+                            Person personWithNewChanges = AskPersonModification(personToModify);
                             if (personToModify != null)
                             {
-                                hospital.ModifyPerson(personToModify);
-                                Console.WriteLine("✅ Data updated successfully!.");
+                                hospital.ModifyPerson(personToModify.Dni, personWithNewChanges, out string errorFromModification);
+                                if (string.IsNullOrEmpty(errorFromModification))
+                                    Console.WriteLine("✅ Data updated successfully!.");
+                                else
+                                    Console.WriteLine(errorFromModification);
                             }
 
                             break;
@@ -131,9 +135,9 @@ namespace HospitalManagement
 
                             DateTime appointmentDate = GetAppointmentDate();
 
-                            Appointment newAppointment = new Appointment(patientToAddAppointment, appointmentDate,
-                                doctorForAppointment);
-                            hospital.TryAddAppointment(patientToAddAppointment, newAppointment);
+                            //Appointment newAppointment = new Appointment(patientToAddAppointment, appointmentDate,
+                            //    doctorForAppointment);
+                            //hospital.TryAddAppointment(patientToAddAppointment, newAppointment);
                             Console.WriteLine(
                                 $"✅ Appointment scheduled for {patientToAddAppointment.Name} with Dr. {doctorForAppointment.Name} on {appointmentDate}.");
                             break;
@@ -147,15 +151,15 @@ namespace HospitalManagement
                             }
 
                             //obtain patient's appointment
-                            Appointment appointmentToModify = hospital.GetAppointment(patientToModifyAppointment.Dni);
-                            if (appointmentToModify == null)
-                            {
-                                Console.WriteLine("❌ No appointment found for this patient.");
-                            }
+                            //Appointment appointmentToModify = hospital.GetAppointment(patientToModifyAppointment.Dni);
+                            //if (appointmentToModify == null)
+                            //{
+                            //    Console.WriteLine("❌ No appointment found for this patient.");
+                            //}
 
-                            hospital.ModifyAppointment(appointmentToModify, GetAppointmentDate);
-                            Console.WriteLine(
-                                $"✅ Appointment updated: {appointmentToModify.Date:dd-MM-yyyy HH:mm} with Dr. {appointmentToModify.Doctor.Name}");
+                            //hospital.ModifyAppointment(appointmentToModify, GetAppointmentDate);
+                            //Console.WriteLine(
+                            //    $"✅ Appointment updated: {appointmentToModify.Date:dd-MM-yyyy HH:mm} with Dr. {appointmentToModify.Doctor.Name}");
 
                             break;
                         case "10":
@@ -168,13 +172,13 @@ namespace HospitalManagement
                             }
 
                             //obtain patient's appointment
-                            Appointment appointmentToRemove = hospital.GetAppointment(patientToRemoveAppointment.Dni);
-                            if (appointmentToRemove == null)
-                            {
-                                Console.WriteLine("❌ No appointment found for this patient.");
-                            }
-                            hospital.TryRemoveAppointment(appointmentToRemove, patientToRemoveAppointment);
-                            Console.WriteLine($"✅ {patientToRemoveAppointment.Name} 's appointment removed ");
+                            //Appointment appointmentToRemove = hospital.GetAppointment(patientToRemoveAppointment.Dni);
+                            //if (appointmentToRemove == null)
+                            //{
+                            //    Console.WriteLine("❌ No appointment found for this patient.");
+                            //}
+                            //hospital.TryRemoveAppointment(appointmentToRemove, patientToRemoveAppointment);
+                            //Console.WriteLine($"✅ {patientToRemoveAppointment.Name} 's appointment removed ");
                             break;
                         default:
                             Console.WriteLine("❌ Invalid choice, please select a valid option.");
@@ -351,6 +355,43 @@ namespace HospitalManagement
             }
         }
 
+        static Person AskPersonModification(Person originalPerson)
+        {
+            Person personWithChange = new Person(originalPerson.Name, originalPerson.Age, originalPerson.Dni);
+
+            Console.WriteLine($"New Dni (Press enter to continue with dni {originalPerson.Dni})");
+            string dni = Console.ReadLine();
+            if(!string.IsNullOrEmpty(dni?.Trim()))
+            {
+                personWithChange.Dni = dni;
+            }
+
+            Console.WriteLine($"New name (Press enter to continue with name {originalPerson.Name})");
+            string name = Console.ReadLine();
+            if (!string.IsNullOrEmpty(name?.Trim()))
+            {
+                personWithChange.Name = name;
+            }
+
+            Console.WriteLine($"New age (Press enter to continue with age {originalPerson.Age})");
+            string age = Console.ReadLine();
+            while(true)
+            {
+                if (string.IsNullOrEmpty(age?.Trim()))
+                {
+                    break;
+                }
+                if (int.TryParse(age, out int ageAsInt))
+                {
+                    personWithChange.Age = ageAsInt;
+                    break;
+                }
+                Console.WriteLine($"New age was not a number. Please use a valid age (Press enter to continue with age {originalPerson.Age})");
+                age = Console.ReadLine();
+            }
+
+            return personWithChange;
+        }
 
         public static int ConvertStringInt(string question)
         {
