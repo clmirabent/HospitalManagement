@@ -1,0 +1,6 @@
+C:\Users\Carla\source\repos\clmirabent\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.csproj.AssemblyReference.cache
+C:\Users\Carla\source\repos\clmirabent\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.csproj.CoreCompileInputs.cache
+C:\Users\Carla\source\repos\clmirabent\HospitalManagement\HospitalManagement\bin\Debug\HospitalManagement.exe
+C:\Users\Carla\source\repos\clmirabent\HospitalManagement\HospitalManagement\bin\Debug\HospitalManagement.pdb
+C:\Users\Carla\source\repos\clmirabent\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.exe
+C:\Users\Carla\source\repos\clmirabent\HospitalManagement\HospitalManagement\obj\Debug\HospitalManagement.pdb

@@ -161,6 +161,27 @@ namespace HospitalManagement
             return true;
         }
 
+        public bool TryModifyPatient(string patientDni, Patient patientWithChanges, out Patient modifiedPatient, out string error)
+        {
+            Patient patientToModify = GetPatient(patientDni);
+
+            if(patientToModify is null)
+            {
+                modifiedPatient = null;
+                error = "Patient not found";
+                return false;
+            }
+
+            patientToModify.Name = patientWithChanges.Name;
+            patientToModify.Dni = patientWithChanges.Dni;
+            patientToModify.Age = patientWithChanges.Age;
+            patientToModify.DoctorAssigned = patientWithChanges.DoctorAssigned;
+            patientToModify.AdmissionDate = patientWithChanges.AdmissionDate;
+            modifiedPatient = patientToModify;
+            error = "";
+            return true;
+        }
+
         //public bool TryAddAppointment(Patient patient, Appointment appointment)
         //{
         //    patient.ClinicalHistory.Appointments.Add(appointment);
