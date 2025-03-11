@@ -37,6 +37,20 @@ namespace HospitalManagement
             return true;
         }
 
+        public bool TryRemoveAdmin(string adminDniToRemove, out string error)
+        {
+            AdminStaff adminFound = AdminStaffs.Find(a => a.Dni == adminDniToRemove);
+
+            if (adminFound is null)
+            {
+                error = "This admin is not registered";
+                return false;
+            }
+
+            AdminStaffs.Remove(adminFound);
+            error = "";
+            return true;
+        }
         public bool TryAddPatient(Person person, Doctor doctorAssigned, out string error)
         {
             if (doctorAssigned == null)
@@ -97,6 +111,11 @@ namespace HospitalManagement
         public Doctor GetDoctor(string docId)
         {
             return Doctors.Find(d => d.Dni == docId);
+        }
+
+        public AdminStaff GetAdmin(string adminDni)
+        {
+            return AdminStaffs.Find(a => a.Dni == adminDni);
         }
 
         public void AddAdmin_staff(AdminStaff person)
@@ -180,6 +199,27 @@ namespace HospitalManagement
             modifiedPatient = patientToModify;
             error = "";
             return true;
+        }
+
+        public bool TryModifyAdmin(string adminDni, AdminStaff adminWithChanges, out AdminStaff modifiedAdmin, out string error)
+        {
+            AdminStaff adminToModify = GetAdmin(adminDni);
+            if(adminToModify is null)
+            {
+                modifiedAdmin = null;
+                error = "Admin not found";
+                return false;
+            }
+
+            adminToModify.Name = adminWithChanges.Name;
+            adminToModify.Age = adminWithChanges.Age;
+            adminToModify.Dni = adminWithChanges.Dni;
+            adminToModify.Departament = adminWithChanges.Departament;
+            adminToModify.Position = adminWithChanges.Position;
+            modifiedAdmin = adminToModify;
+            error = "";
+            return true;
+
         }
 
         //public bool TryAddAppointment(Patient patient, Appointment appointment)
